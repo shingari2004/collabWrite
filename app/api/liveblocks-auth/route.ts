@@ -1,32 +1,43 @@
 import { liveblocks } from "@/lib/liveblocks";
 import { getUserColor } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 export async function POST(request: Request) {
   console.log(request.url);
+
   const clerkUser = await currentUser();
 
-  if(!clerkUser) redirect('/sign-in');
+  if (!clerkUser) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: '/sign-in',
+      },
+    });
+  }
 
   const { id, firstName, lastName, emailAddresses, imageUrl } = clerkUser;
 
-  // Get the current user from your database
+  const email = emailAddresses?.[0]?.emailAddress ?? null;
+
+  if (!email) {
+    return new Response('No email found for user', { status: 400 });
+  }
+
   const user = {
     id,
     info: {
       id,
       name: `${firstName} ${lastName}`,
-      email: emailAddresses[0].emailAddress,
+      email,
       avatar: imageUrl,
       color: getUserColor(id),
-    }
-  }
+    },
+  };
 
-  // Identify the user and return the result
   const { status, body } = await liveblocks.identifyUser(
     {
-      userId: user.info.email,
+      userId: id,
       groupIds: [],
     },
     { userInfo: user.info },
