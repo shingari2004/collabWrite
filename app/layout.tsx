@@ -14,7 +14,10 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: "CollabWrite",
-  description: "Your go-to collaborative editor",
+  description: "A collaborative writing platform",
+  icons: {
+    icon: "/assets/images/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -30,6 +33,9 @@ export default function RootLayout({
           colorPrimary: "#3371FF",
           fontSize: "16px",
         },
+        layout: {
+      logoImageUrl: '/assets/images/logo.png',  // <-- your icon path here
+    },
       }}
     >
       <html lang="en" suppressHydrationWarning>
